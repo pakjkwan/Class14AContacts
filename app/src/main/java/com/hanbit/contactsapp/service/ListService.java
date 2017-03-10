@@ -1,5 +1,7 @@
 package com.hanbit.contactsapp.service;
 
+import com.hanbit.contactsapp.domain.MemberBean;
+
 import java.util.ArrayList;
 
 /**
@@ -7,5 +9,5 @@ import java.util.ArrayList;
  */
 
 public interface ListService {
-    public ArrayList<?> list();
+    public ArrayList<MemberBean> list();
 }
