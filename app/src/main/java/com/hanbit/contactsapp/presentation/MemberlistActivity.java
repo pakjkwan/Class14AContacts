@@ -28,14 +28,15 @@ public class MemberlistActivity extends AppCompatActivity {
                 final MemberList mlist=new MemberList(MemberlistActivity.this);
                 ListService service=new ListService() {
                     @Override
-                    public ArrayList<MemberBean> list() {
-                        return mlist.list("SELECT _id AS id,name,phone,age,address,salary FROM Member;");
+                    public ArrayList<?> list() {
+                        ArrayList<?>list=mlist.list("SELECT _id AS id,name,phone,age,address,salary FROM Member;");
+                        return list;
                     }
                 };
-                ArrayList<MemberBean>list=service.list();
-                Toast.makeText(MemberlistActivity.this, list.get(0).getName(), Toast.LENGTH_SHORT).show();
+                ArrayList<?>list=service.list();
+                Toast.makeText(MemberlistActivity.this, ((MemberBean)list.get(0)).getName(), Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(MemberlistActivity.this,MemberdetailActivity.class);
-                intent.putExtra("id",list.get(0).getId());
+                intent.putExtra("id","");
                 startActivity(intent);
             }
         });
@@ -45,7 +46,7 @@ public class MemberlistActivity extends AppCompatActivity {
             super(context);
         }
         @Override
-        public ArrayList<MemberBean> list(String sql) {
+        public ArrayList<?> list(String sql) {
             ArrayList<MemberBean> list=new ArrayList<>();
             SQLiteDatabase db=super.getDatabase();
             Cursor cursor=db.rawQuery(sql,null);
