@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanbit.contactsapp.R;
@@ -35,13 +36,25 @@ public class MemberdetailActivity extends AppCompatActivity {
             public Object findOne(Map<?, ?> map) {
                 MemberBean temp=(MemberBean)mDetail.findOne(
                         "SELECT _id AS id,name,phone,age,address,salary " +
-                                " FROM Member WHERE _id = "+map.get("id")+";");
+                                " FROM Member WHERE _id = '"+map.get("id")+"';");
                return temp;
             }
         };
         member=(MemberBean)service.findOne(map);
-        Toast.makeText(MemberdetailActivity.this,member.getName(),Toast.LENGTH_SHORT).show();
-       findViewById(R.id.btGo).setOnClickListener(new View.OnClickListener(){
+      //  Toast.makeText(MemberdetailActivity.this,member.getName(),Toast.LENGTH_SHORT).show();
+       TextView tvId= (TextView) findViewById(R.id.tvId);
+       tvId.setText(member.getId());
+        TextView tvName= (TextView) findViewById(R.id.tvName);
+        tvName.setText(member.getName());
+        TextView tvPhone= (TextView) findViewById(R.id.tvPhone);
+        tvPhone.setText(member.getPhone());
+        TextView tvAge= (TextView) findViewById(R.id.tvAge);
+        tvAge.setText(member.getAge());
+        TextView tvAddress= (TextView) findViewById(R.id.tvAddress);
+        tvAddress.setText(member.getAddress());
+        TextView tvSalary= (TextView) findViewById(R.id.tvSalary);
+        tvSalary.setText(member.getSalary());
+       findViewById(R.id.btUpdate).setOnClickListener(new View.OnClickListener(){
            @Override
            public void onClick(View v) {
                Toast.makeText(MemberdetailActivity.this,"ID is "+id,Toast.LENGTH_LONG).show();
@@ -50,12 +63,9 @@ public class MemberdetailActivity extends AppCompatActivity {
        });
     }
     class MemberDetail extends DetailQuery{
-
-
         public MemberDetail(Context context) {
             super(context);
         }
-
         @Override
         public Object findOne(String sql) {
             MemberBean bean=null;
