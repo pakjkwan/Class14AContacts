@@ -1,12 +1,21 @@
 package com.hanbit.contactsapp.presentation;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.hanbit.contactsapp.R;
+import com.hanbit.contactsapp.dao.DetailQuery;
+import com.hanbit.contactsapp.domain.MemberBean;
+import com.hanbit.contactsapp.service.DetailService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MemberdetailActivity extends AppCompatActivity {
 
@@ -16,7 +25,22 @@ public class MemberdetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_memberdetail);
         Intent intent=this.getIntent();
         final String id=intent.getExtras().getString("id");
-
+        Map<String,String>map=new HashMap<>();
+        map.put("id",id);
+        final MemberDetail mDetail=new MemberDetail(this);
+        MemberBean member=new MemberBean();
+        Toast.makeText(MemberdetailActivity.this,map.get("id"),Toast.LENGTH_SHORT).show();
+        DetailService service= new DetailService() {
+            @Override
+            public Object findOne(Map<?, ?> map) {
+                MemberBean temp=(MemberBean)mDetail.findOne(
+                        "SELECT _id AS id,name,phone,age,address,salary " +
+                                " FROM Member WHERE _id = "+map.get("id")+";");
+               return temp;
+            }
+        };
+        member=(MemberBean)service.findOne(map);
+        Toast.makeText(MemberdetailActivity.this,member.getName(),Toast.LENGTH_SHORT).show();
        findViewById(R.id.btGo).setOnClickListener(new View.OnClickListener(){
            @Override
            public void onClick(View v) {
@@ -24,5 +48,32 @@ public class MemberdetailActivity extends AppCompatActivity {
              //  startActivity(new Intent(MemberdetailActivity.this,MemberupdateActivity.class));
            }
        });
+    }
+    class MemberDetail extends DetailQuery{
+
+
+        public MemberDetail(Context context) {
+            super(context);
+        }
+
+        @Override
+        public Object findOne(String sql) {
+            MemberBean bean=null;
+            SQLiteDatabase db=super.getDatabase();
+            Cursor cursor=db.rawQuery(sql,null);
+
+            if(cursor!=null){
+                if(cursor.moveToNext()){
+                    bean=new MemberBean();
+                    bean.setId(cursor.getString(cursor.getColumnIndex("id")));
+                    bean.setName(cursor.getString(cursor.getColumnIndex("name")));
+                    bean.setPhone(cursor.getString(cursor.getColumnIndex("phone")));
+                    bean.setAge(cursor.getString(cursor.getColumnIndex("age")));
+                    bean.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+                    bean.setSalary(cursor.getString(cursor.getColumnIndex("salary")));
+                }
+            }
+            return bean;
+        }
     }
 }
